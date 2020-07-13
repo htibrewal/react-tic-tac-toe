@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 
 import Board from "./Components/Board";
-import GameInfo from "./Components/GameInfo";
+import MoveInfo from "./Components/GameInfo";
 
 
 // Check if any winner exists
@@ -40,10 +40,13 @@ class Square extends React.Component {
       stepNo: 0,
       xIsNext: true,
     }
+
+    this.resetGame = this.resetGame.bind(this);
   }
 
   handleClick (i) {
     const { history, stepNo } = this.state;
+    const prevHistory = history.slice(0, stepNo + 1);
     const current = history[stepNo];
     const squares = current.squares.slice();
 
@@ -54,42 +57,70 @@ class Square extends React.Component {
     squares[i] = this.state.xIsNext ? 'X' : 'O';
 
     this.setState((prevState) => ({
-      history: [...prevState.history, {squares}],
+      history: [...prevHistory, {squares}],
       stepNo: prevState.stepNo + 1,
       xIsNext: !prevState.xIsNext,
     }));
   }
 
 
-  jumpTo (step) {
+  jumpTo(step) {
     this.setState({
-      stepNumber: step,
+      stepNo: step,
       xIsNext: (step%2) === 0,
     });
   }
 
 
+  resetGame() {
+    this.setState({
+      history: [
+        {
+          squares: Array(9).fill(null),
+        }
+      ],
+      stepNo: 0,
+      xIsNext: true,
+    });
+  }
+  
+
   render() {
     const { history, stepNo, xIsNext } = this.state;
     const current = history[stepNo];
-
+    
     const winner = calculateWinner(current.squares);
+
+    let status;
+    if (winner)
+      status = 'Winner: ' + winner;
+    else
+      status = 'Next player: ' + (xIsNext ? 'X' : 'O');
     
     return (
-      <div className="game">
-        <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
+      <>
+        <h2 className="header">
+          TIC TAC TOE
+        </h2>
+        <div className="game">
+          <div className="game-board">
+            <Board
+              squares={current.squares}
+              onClick={(i) => this.handleClick(i)}
+            />
+          </div>
+          <div className="game-info">
+            <div>{status}</div>
+            <button className="reset" onClick={this.resetGame}>
+              Reset Game
+            </button>
+          </div>
+          <MoveInfo
+            history={history}
+            jumpTo={(i) => this.jumpTo(i)}
           />
         </div>
-        <GameInfo
-          history={history}
-          xIsNext={xIsNext}
-          winner={winner}
-          jumpTo={(i) => this.jumpTo(i)}
-        />
-      </div>
+      </>
     );
   }
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-function GameInfo (props) {
+function MoveInfo (props) {
     // Display list of moves
     const moves = props.history.map((_, move) => {
         const desc = move ?
@@ -9,23 +9,20 @@ function GameInfo (props) {
 
         return (
             <li key={move}>
-                <button onClick={() => props.jumpTo(move)}>{desc}</button>
+                <button
+                    className="move-btn"
+                    onClick={() => props.jumpTo(move)}>
+                    {desc}
+                </button>
             </li>
         )
     });
 
-    let status;
-    if (props.winner)
-        status = 'Winner: ' + props.winner;
-    else
-        status = 'Next player: ' + (props.xIsNext ? 'X' : 'O');
-
     return (
-        <div className="game-info">
-            <div>{status}</div>
+        <div className="move-info">
             <ol>{moves}</ol>
         </div>
     );
 }
 
-export default GameInfo;
+export default MoveInfo;

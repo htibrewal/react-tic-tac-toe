@@ -22,7 +22,7 @@ class Board extends React.Component {
                 jsx.push(this.renderSquare((i * 3) + j));
             }
 
-            elems.push(<div className="board-row">{jsx}</div>);
+            elems.push(<div key={i} className="board-row">{jsx}</div>);
         }
 
         return(
